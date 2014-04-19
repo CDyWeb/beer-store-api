@@ -10,4 +10,4 @@ A REST web service that provides The Beer Store product, store, and inventory in
 /store/:store_id
 
 ## Inventory ##
-/stores/:store_id/product/:product_id
+/stores/:store_id/products/:product_id/inventory
