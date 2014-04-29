@@ -33,8 +33,8 @@ for d in data:
 	store_phone = store_city_postal.next_sibling.next_sibling
 	store_city = store_city_postal[:-8].split(",")[0]
 	store_postal = store_city_postal[-7:]
-	store_lat = coords[0]
-	store_lng = coords[1]
+	store_lat = coords[1]
+	store_lng = coords[0]
 	store_address = store_address.strip()
 
 	print "Name: "+store_name
