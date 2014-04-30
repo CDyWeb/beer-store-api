@@ -39,6 +39,7 @@ INSTALLED_APPS = (
 	'django_extensions',
 	'products',
 	'rest_framework',
+    'rest_framework_swagger',
 )
 
 
@@ -91,8 +92,11 @@ STATIC_URL = '/static/'
 
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': (
-	'rest_framework.renderers.JSONRenderer',
-	'rest_framework.renderers.BrowsableAPIRenderer',
-	'rest_framework.renderers.XMLRenderer',
+    	'rest_framework.renderers.JSONPRenderer',
+    	'rest_framework.renderers.JSONRenderer',
 	)
+}
+
+SWAGGER_SETTINGS = {
+    'api_version': '0.1',
 }

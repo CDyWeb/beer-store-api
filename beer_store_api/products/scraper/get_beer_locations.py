@@ -30,8 +30,8 @@ def get_beer_locations(product_id, beer_id, size):
 
 		inventory = Inventory()
 
-		inventory.product_id = product
-		inventory.store_id = store
+		inventory.product = product
+		inventory.store = store
 		inventory.quantity = int(quantity)
 		inventory.save()
 

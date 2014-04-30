@@ -59,6 +59,10 @@ class Inventory(models.Model):
 	"""
 	Represents product inventories
 	"""
-	product_id = models.ForeignKey(Product, to_field='product_id')
-	store_id = models.ForeignKey(Store, to_field='store_id')
+	product = models.ForeignKey(Product)
+	store = models.ForeignKey(Store)
 	quantity = models.IntegerField()
+
+	def __unicode__(self):
+		return self.quantity
+	

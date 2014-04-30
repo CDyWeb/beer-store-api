@@ -1,62 +1,128 @@
 from django.shortcuts import render
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, renderer_classes
 from rest_framework.response import Response
-from .models import Store, Product, Inventory
-from .serializers import StoreSerializer, ProductSerializer, InventorySerializer
+from .models import Store, Product, Inventory 
+from .serializers import StoreSerializer, ProductSerializer, StoresWithProductSerializer, ProductsAtStoreSerializer
 
 
 # Store Views
 @api_view(['GET'])
 def stores(request, format=None):
-	"""
-	Returns data on all Beer Store locations
-	"""
-	stores = Store.objects.all()
-	serializer = StoreSerializer(stores)
-	return Response(serializer.data)
+    """
+    Returns data on all Beer Store locations
+    city -- The stores' city
+    """
+    stores = Store.objects.all()
+
+    # get options
+    city = request.QUERY_PARAMS.get('city', None)
+
+    # filter if options are set
+    if city is not None:
+        stores = stores.filter(city=city)
+    
+    # return data
+    serializer = StoreSerializer(stores)
+    return Response(serializer.data)
 
 
 @api_view(['GET'])
 def store_by_id(request, store_id, format=None):
-	"""
-	Returns data on a Beer Store location with
-	a specified store id
-	"""
-	stores = Store.objects.get(store_id = int(store_id))
-	serializer = StoreSerializer(stores)
-	return Response(serializer.data)
+    """
+    Returns data on a Beer Store location with a specified store id
+    """
+    # get store by id
+    stores = Store.objects.get(store_id = int(store_id))
+
+    # return data
+    serializer = StoreSerializer(stores)
+    return Response(serializer.data)
 
 
 # Product Views
 @api_view(['GET'])
 def products(request, format=None):
-	"""
-	Returns data on all Beer Store products
-	"""
-	products = Product.objects.all()
-	serializer = ProductSerializer(products)
-	return Response(serializer.data)
+    """
+    Returns data on all Beer Store products
+    category -- The beer's category 
+    type -- The beer's type
+    brewer -- The beer's brewer
+    country -- The beer's country of origin
+    """
+    products = Product.objects.all()
+
+    # get options
+    category = request.QUERY_PARAMS.get('category', None)
+    type = request.QUERY_PARAMS.get('type', None)
+    brewer = request.QUERY_PARAMS.get('brewer', None)
+    country = request.QUERY_PARAMS.get('country', None)
+
+    # filter if options are set
+    if category is not None:
+        products = products.filter(category=category)
+ 
+    if type is not None:
+        products = products.filter(type=type)
+
+    if brewer is not None:
+        products = products.filter(brewer=brewer)
+
+    if country is not None:
+        products = products.filter(country=country)
+ 
+    # return data
+    serializer = ProductSerializer(products)
+    return Response(serializer.data)
 
 
 @api_view(['GET'])
 def product_by_id(request, product_id, format=None):
-	"""
-	Returns data on a Beer Store product with
-	a specified product id
-	"""
-	product = Product.objects.get(product_id = int(product_id))
-	serializer = ProductSerializer(product)
-	return Response(serializer.data)
+    """
+    Returns data on a Beer Store product with a specified product id
+    """
+    # get product by id
+    product = Product.objects.get(product_id = int(product_id))
+
+    # return data
+    serializer = ProductSerializer(product)
+    return Response(serializer.data)
 
 
 # Inventory Views
 @api_view(['GET'])
 def inventory(request, store_id, product_id, format=None):
-	"""
-	Returns inventory of a specified product at specified store
-	"""
-	store = Store.objects.get(store_id=int(store_id))
-	product = Product.objects.get(product_id=int(product_id))
-	inventory = Inventory.objects.get(store_id=store, product_id=product)
-	serializer = InventorySerializer(inventory)
-	return Response(serializer.data)
+    """
+    Returns inventory of a specified product at specified store
+    """
+    # get store and product by id
+    store = Store.objects.get(store_id=int(store_id))
+    product = Product.objects.get(product_id=int(product_id))
+
+    # get product inventory
+    inventory = Inventory.objects.get(store=store, product=product)
+
+    # return data
+    serializer = InventorySerializer(inventory)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+def products_at_store(request, store_id, format=None):
+    """
+    Returns products at a specified store
+    """
+    store = Store.objects.get(store_id=int(store_id))
+    inventory = Inventory.objects.filter(store=store)
+    serializer = ProductsAtStoreSerializer(inventory)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+def stores_with_product(request, product_id, format=None):
+    """
+    Returns stores with a specified product
+    """
+    product = Product.objects.get(product_id=int(product_id))
+    inventory = Inventory.objects.filter(product=product)
+    serializer = StoresWithProductSerializer(inventory)
+    return Response(serializer.data)
