@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework.decorators import api_view, renderer_classes
 from rest_framework.response import Response
 from .models import Store, Product, Inventory 
-from .serializers import StoreSerializer, ProductSerializer, StoresWithProductSerializer, ProductsAtStoreSerializer
+from .serializers import StoreSerializer, ProductSerializer, StoresWithProductSerializer, ProductsAtStoreSerializer, InventorySerializer
 
 
 # Store Views
@@ -36,6 +36,22 @@ def store_by_id(request, store_id, format=None):
 
     # return data
     serializer = StoreSerializer(stores)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+def stores_with_product(request, product_id, format=None):
+    """
+    Returns stores with a specified product
+    """
+    # get product by id
+    product = Product.objects.get(product_id=int(product_id))
+
+    # get inventory quantities
+    inventory = Inventory.objects.filter(product=product)
+
+    # return data
+    serializer = StoresWithProductSerializer(inventory)
     return Response(serializer.data)
 
 
@@ -88,6 +104,22 @@ def product_by_id(request, product_id, format=None):
     return Response(serializer.data)
 
 
+@api_view(['GET'])
+def products_at_store(request, store_id, format=None):
+    """
+    Returns products at a specified store
+    """
+    # get store by id
+    store = Store.objects.get(store_id=int(store_id))
+
+    # get inventory quantity
+    inventory = Inventory.objects.filter(store=store)
+
+    # return data
+    serializer = ProductsAtStoreSerializer(inventory)
+    return Response(serializer.data)
+
+
 # Inventory Views
 @api_view(['GET'])
 def inventory(request, store_id, product_id, format=None):
@@ -103,26 +135,4 @@ def inventory(request, store_id, product_id, format=None):
 
     # return data
     serializer = InventorySerializer(inventory)
-    return Response(serializer.data)
-
-
-@api_view(['GET'])
-def products_at_store(request, store_id, format=None):
-    """
-    Returns products at a specified store
-    """
-    store = Store.objects.get(store_id=int(store_id))
-    inventory = Inventory.objects.filter(store=store)
-    serializer = ProductsAtStoreSerializer(inventory)
-    return Response(serializer.data)
-
-
-@api_view(['GET'])
-def stores_with_product(request, product_id, format=None):
-    """
-    Returns stores with a specified product
-    """
-    product = Product.objects.get(product_id=int(product_id))
-    inventory = Inventory.objects.filter(product=product)
-    serializer = StoresWithProductSerializer(inventory)
     return Response(serializer.data)

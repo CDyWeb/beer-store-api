@@ -27,10 +27,10 @@ class ProductsAtStoreSerializer(serializers.ModelSerializer):
     """
     InventorySerilizer maps to the Inventory model
     """
+    product = ProductSerializer()
+
     def get_pk_field(self, model_field):
         return None
-
-    product = ProductSerializer()
 
     class Meta:
         model = Inventory
@@ -40,11 +40,21 @@ class StoresWithProductSerializer(serializers.ModelSerializer):
     """
     InventorySerilizer maps to the Inventory model
     """
+    store = StoreSerializer()
+
     def get_pk_field(self, model_field):
         return None
-
-    store = StoreSerializer()
 
     class Meta:
         model = Inventory
         exclude = ('product',)
+
+class InventorySerializer(serializers.ModelSerializer):
+    """
+    InventorySerilizer maps to the Inventory model
+    """
+    def get_pk_field(self, model_field):
+        return None
+
+    class Meta:
+        model = Inventory
