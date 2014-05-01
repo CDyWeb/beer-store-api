@@ -43,6 +43,20 @@ urlpatterns = patterns("",
 		view=views.stores_with_product,
 		name="beer_store_api"
 	),
+    
+    # /inventories
+	url(
+		regex=r"^inventories/$",
+		view=views.inventories,
+		name="beer_store_api"
+	),
+
+    # /products/{product_id}/inventories
+	url(
+		regex=r"^products/(?P<product_id>[0-9]+)/inventories/$",
+		view=views.product_inventories,
+		name="beer_store_api"
+	),
 
 	# /stores/{store_id}/products/{product_id}/inventory
 	url(

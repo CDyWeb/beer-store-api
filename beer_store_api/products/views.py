@@ -136,3 +136,26 @@ def inventory(request, store_id, product_id, format=None):
     # return data
     serializer = InventorySerializer(inventory)
     return Response(serializer.data)
+
+
+@api_view(['GET'])
+def inventories(request, format=None):
+    """
+    Returns all inventories
+    """
+    inventory = Inventory.objects.all()
+
+    serializer = InventorySerializer(inventory)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+def product_inventories(request, product_id, format=None):
+    """
+    Returns all inventories of a specified product
+    """
+    product = Product.objects.get(product_id=int(product_id))
+    inventory = Inventory.objects.filter(product=product)
+
+    serializer = InventorySerializer(inventory)
+    return Response(serializer.data)

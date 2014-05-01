@@ -17,7 +17,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 # See https://docs.djangoproject.com/en/1.6/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'icq(yp5!qev4iud@3j24kdzub#3r0r=s!9wuvlh(-m*nqz3%2m'
+SECRET_KEY = ''
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -62,11 +62,11 @@ WSGI_APPLICATION = 'beer_store_api.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'beer_store_api',
-		'USER': 'djuta',
-		'PASSWORD': 'nevedJ27!',
-		'HOST': 'localhost',
+        'ENGINE': '',
+        'NAME': '',
+		'USER': '',
+		'PASSWORD': '',
+		'HOST': '',
 		'PORT': '',
     }
 }
