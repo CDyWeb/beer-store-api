@@ -24,7 +24,7 @@ The Beer Store API is a side project, so I'll try to implement features when
 I get the chance. As of now, the data is pretty basic (ie. no meta data, no pagination), 
 but should be enough to make some cool applications. I've tried to make sure the data is 
 accurate as possible, but unfortunately I'm limited to the accuracy of The Beer Store website. 
-For example, you'll notice that there's a store who's coordinates place it in the Atlantic Ocean 
+For example, you'll notice that there's a store with coordinates that place it in the Atlantic Ocean 
 just west of Africa. That's just what I scraped from the website.
 
 ## How it was made ##
