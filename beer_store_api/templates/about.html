@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}About{% endblock %}
+{% block aboutnav %}active{% endblock %}
+
+{% block content %}
+      <div class="row marketing lead-par">
+        <div class="col-md-12">
+            <h2>About</h2>
+            <p>
+                The Beer Store API is a free to use REST service that provides 
+                The Beer Store store, product, and inventory information. 
+                The service periodicly crawls The Beer Store website to collect data
+                and serves padded JSON. This service has no official association 
+                with The Beer Store.
+            </p>
+            <p>
+                The Beer Store API is a side project, so I'll try to implement 
+                features when I get the chance. As of now, the data
+                is pretty basic (ie. no meta data, no pagination), but should be enough
+                to make some cool applications. I've tried to make sure
+                the data is accurate as possible, but unfortunately I'm limited
+                to the accuracy of The Beer Store website. For example, you'll notice
+                that there's a store who's coordinates place it in the Atlantic
+                Ocean just west of Africa. That's just what I scraped from the
+                website.
+            </p>
+            <p>
+                The service was created using Python, Django, Django REST Framework.
+                For now the documentation is created using Django REST Swagger but
+                that might change in the future. I used the Beautiful Soup library
+                to crawl and extract data from The Beer Store website You can view 
+                the application and scraper code 
+                <a href="http://github.com/djuta/beer-store-api">here</a>.
+            </p>
+            <p>
+                The Beer Store API was created by me, Deven Juta. I'm currently
+                a student at Humber College enrolled in the Web Development 
+                Post-Graduate Certificate Program. I'm currently looking for employment
+                opportunities for the program's field placement component. So yeah...
+                if you know of anything, please email me.
+                This project is not associated with any of my school assignments.
+            </p>
+        </div>
+      </div>
+{% endblock %}
