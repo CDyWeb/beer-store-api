@@ -11,15 +11,15 @@
             <p>
                 Here's an example application that uses the /stores access 
                 point to retrieve store locations based on their city. The city parameter
-                is set through a string query (eg. city=Toronto). Enter a city, 
-                click the search button, and The Beer Store locations in that
+                is set through a string query (eg. city=Toronto). 
+                Enter a city and The Beer Store locations in that
                 city will be plotted on the map. Click on a marker to view details 
                 about the location.
             </p>
             <div ng-controller="BeerMapController">
                 <label for="city">City: </label>
-                <input name="city" name="city" type="text" ng-model="city"/>
-                <input class="btn-success" type="button" value="Search" ng-click="filterCity()" />
+                <input class="form-control" name="city" name="city" type="text" ng-change="filterCity()" ng-model="city"/>
+                <br />
                 <google-map center='{"latitude": 48, "longitude": -78}' zoom='5'
                 draggable="true">
                     <marker ng-repeat="location in locations"

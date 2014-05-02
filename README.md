@@ -15,9 +15,17 @@ A REST web service that provides The Beer Store product, store, and inventory in
 /stores/{store_id}/products/{product_id}/inventory
 
 ## About ##
-The Beer Store API collects and provides The Beer Store product, store, and inventory information. Currently, all data is served 
-in padded JSON, but I'll probably include XML at some point. It'll probably be pretty basic initially, but I'll start including more info
-and meta data as I continue working on it
+The Beer Store API is a free to use REST service that provides 
+The Beer Store store, product, and inventory information. The service 
+periodically crawls The Beer Store website to collect data and serves padded JSON. 
+This service has no official association with The Beer Store.
+
+The Beer Store API is a side project, so I'll try to implement features when 
+I get the chance. As of now, the data is pretty basic (ie. no meta data, no pagination), 
+but should be enough to make some cool applications. I've tried to make sure the data is 
+accurate as possible, but unfortunately I'm limited to the accuracy of The Beer Store website. 
+For example, you'll notice that there's a store who's coordinates place it in the Atlantic Ocean 
+just west of Africa. That's just what I scraped from the website.
 
 ## How it was made ##
 - Python
