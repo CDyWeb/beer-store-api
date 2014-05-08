@@ -2,7 +2,7 @@ from django.shortcuts import render
 from rest_framework.decorators import api_view, renderer_classes
 from rest_framework.response import Response
 from .models import Store, Product, Inventory 
-from .serializers import StoreSerializer, ProductSerializer, StoresWithProductSerializer, ProductsAtStoreSerializer, InventorySerializer
+from .serializers import StoreSerializer, ProductSerializer, StoresWithProductSerializer, ProductsAtStoreSerializer, InventorySerializer, BeerSerializer
 
 
 # Store Views
@@ -158,4 +158,34 @@ def product_inventories(request, product_id, format=None):
     inventory = Inventory.objects.filter(product=product)
 
     serializer = InventorySerializer(inventory)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+def beers(request, format=None):
+    """
+    Returns all beers
+    """
+    beers = Product.objects.distinct('beer_id')
+    serializer = BeerSerializer(beers)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+def beer_by_id(request, beer_id, format=None):
+    """
+    Returns a beer with a specified beer id
+    """
+    beer = Product.objects.filter(beer_id = int(beer_id)).distinct('beer_id')
+    serializer = BeerSerializer(beer)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+def beer_products(request, beer_id, format=None):
+    """
+    Returns a beer with a specified beer id
+    """
+    beers = Product.objects.filter(beer_id = int(beer_id))
+    serializer = ProductSerializer(beers)
     return Response(serializer.data)

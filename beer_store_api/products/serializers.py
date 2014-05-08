@@ -49,3 +49,13 @@ class InventorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Inventory
+
+
+class BeerSerializer(serializers.ModelSerializer):
+    """
+    BeerSerilizer maps to the Product model
+    """
+    class Meta:
+        model = Product
+        exclude = ('product_id', 'size', 'price',)
+	

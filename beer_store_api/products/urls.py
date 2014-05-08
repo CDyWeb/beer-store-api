@@ -23,6 +23,27 @@ urlpatterns = patterns("",
 		name="beer_store_api"
 	),
 
+    # /beers
+	url(
+		regex=r"^beers/$",
+		view=views.beers,
+		name="beer_store_api"
+	),
+
+    # /beers/{product_id}
+	url(
+		regex=r"^beers/(?P<beer_id>[0-9]+)/$",
+		view=views.beer_by_id,
+		name="beer_store_api"
+	),
+
+    # /beers/{product_id}
+	url(
+		regex=r"^beers/(?P<beer_id>[0-9]+)/products/$",
+		view=views.beer_products,
+		name="beer_store_api"
+	),
+
 	# /products/{product_id}
 	url(
 		regex=r"^products/(?P<product_id>[0-9]+)/$",
