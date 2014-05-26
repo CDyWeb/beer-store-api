@@ -5,7 +5,7 @@ A REST web service that provides The Beer Store product, store, and inventory in
 
 ## About ##
 The Beer Store API is a free to use REST service that provides 
-The Beer Store store, product, and inventory information. The service 
+The Beer Store store, product, and availability information. The service 
 periodically crawls The Beer Store website to collect data and serves padded JSON. 
 This service has no official association with The Beer Store.
 
