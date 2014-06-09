@@ -13,7 +13,7 @@ class Command(BaseCommand):
         Scrapes and stores product information
         """
         # get beer page html and make soup object
-        html = urllib2.urlopen(top_url + "/beers/search/all")
+        html = urllib2.urlopen(TOP_URL + "/beers/search")
         soup_beers = BeautifulSoup(html)
 
         # find all beers
@@ -57,6 +57,7 @@ class Command(BaseCommand):
                         # get product information
                         beer_ids = beer_size.a["href"].split('=')[1]
                         beer_id = beer_ids.split('-')[0]
+                        print beer_id
                         beer_product_id = beer_ids.split('-')[1]
                     
                         # Comment to disable monitoring
@@ -68,53 +69,49 @@ class Command(BaseCommand):
                         # doesn't play nice with custom primary keys
                         try:
                             product_entry  = Product.objects.get(product_id=int(beer_product_id.strip()))
-                            created = True
                         except: 
                             product_entry = Product()
-                            created = False
 
-                        # make new product object if it doesnt exise
-                        if not created:
-                            # set fields
-                            product_entry.name = beer_name.strip()
-                            product_entry.size = beer_product_size.strip()
-                            product_entry.beer_id = int(beer_id.strip())
-                            product_entry.product_id = int(beer_product_id.strip())
-                            product_entry.image_url = beer_image.strip()
-                            product_entry.country = beer_country.strip()
-                            product_entry.type = beer_type.strip()
+                        # set fields
+                        product_entry.name = beer_name.strip()
+                        product_entry.size = beer_product_size.strip()
+                        product_entry.beer_id = int(beer_id.strip())
+                        product_entry.product_id = int(beer_product_id.strip())
+                        product_entry.image_url = beer_image.strip()
+                        product_entry.country = beer_country.strip()
+                        product_entry.type = beer_type.strip()
                         
-                            # set product attributes
-                            # NOTE: this code was created befor the beer store redesign
-                            # it still works but some items no longer exist so they were 
-                            # temporarily omitted from the serializer
-                            for key, value in beer_details.iteritems():
-                                attr = key.get_text()[:-1]
-                                val = value.get_text()
+                        # set product attributes
+                        # NOTE: this code was created befor the beer store redesign
+                        # it still works but some items no longer exist so they were 
+                        # temporarily omitted from the serializer
+                        for key, value in beer_details.iteritems():
+                            attr = key.get_text()[:-1]
+                            val = value.get_text()
 
-                                if attr == 'Category':
-                                    product_entry.category = val
+                            if attr == 'Category':
+                                product_entry.category = val
 
-                                if attr == 'Alcohol Content (ABV)':
-                                    product_entry.abv = float(val[:-1])
+                            if attr == 'Alcohol Content (ABV)':
+                                product_entry.abv = float(val[:-1])
 
-                                if attr == 'Style':
-                                    product_entry.style= val
+                            if attr == 'Style':
+                                product_entry.style= val
 
-                                if attr == 'Attributes':
-                                    product_entry.attributes= val
+                            if attr == 'Attributes':
+                                product_entry.attributes= val
 
-                                if attr == 'Brewer':
-                                    product_entry.brewer= val
+                            if attr == 'Brewer':
+                                product_entry.brewer= val
             
 
                         # update pricing info 
                         try:
                             product_entry.price = float(beer_product_price.strip()[1:])
+                            product_entry.on_sale = False
                         
                         except:
                             product_entry.price = float(beer_product_price.split('sale')[1].strip()[1:])
                             product_entry.on_sale = True
-                    
-                        # save product
+
                         product_entry.save()

@@ -159,6 +159,11 @@ def beer_products(request, beer_id, format=None):
     # get the beer's products
     products = Product.objects.filter(beer_id = int(beer_id))
 
+    on_sale = request.QUERY_PARAMS.get('on_sale', None)
+    
+    if on_sale == "true":
+        products = products.filter(on_sale=True)
+
     # return data
     serializer = ProductSerializer(products)
     return Response(serializer.data)
@@ -210,7 +215,10 @@ def beer_by_id(request, beer_id, format=None):
     Returns a beer with a specified beer id
     """
     # get beer
-    beer = Product.objects.filter(beer_id = int(beer_id)).distinct('beer_id')
+    beer_results = Product.objects.filter(beer_id = int(beer_id)).distinct('beer_id')
+    beer = list(beer_results[:1])
+    if beer:
+        beer = beer[0]
 
     # return data
     serializer = BeerSerializer(beer)

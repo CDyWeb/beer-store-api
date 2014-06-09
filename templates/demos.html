@@ -18,7 +18,7 @@
             </p>
             <div ng-controller="BeerMapController">
                 <label for="city">City: </label>
-                <input class="form-control" name="city" name="city" type="text" ng-change="filterCity()" ng-model="city"/>
+                <input class="form-control" name="city" id="city" type="text" ng-change="filterCity()" ng-model="city"/>
                 <br />
                 <google-map center='{"latitude": 48, "longitude": -78}' zoom='5'
                 draggable="true">
@@ -36,24 +36,6 @@
                     </marker>
                 </google-map>
             </div>
-            <!--h3>Inventory of a Product at a Specified Store</h3>    
-            <p>
-                Here's another example application that uses the /stores access 
-                point to populate a dropdown list. When a store is selected,
-                the stores/{store_id}/products access point populates a dropdown
-                list with products at that store. When a product is selected, it's
-                quantity at that store is displayed.
-            </p>
-            <div ng-controller="BeerInventoryController">
-                <label for="stores">Store</label>
-                <select name="stores" class="form-control" ng-change="updateStore()" ng-model="selectedStore" ng-options="(l.name+' - '+l.city) for l in locations">
-                </select><br />
-                <label for="products">Product</label>
-                <select for="products" class="form-control" ng-model="selectedProduct" ng-options="(p.product.name+' - '+p.product.size) for p in products"></select><br />
-                <label>Quantity</label>
-                <input type="text" readonly="readonly" class="form-control" value="[[ selectedProduct.quantity ]]" />
-
-            </div-->
         </div>
       </div>
 {% endblock %}
