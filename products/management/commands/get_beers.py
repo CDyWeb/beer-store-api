@@ -1,10 +1,8 @@
-import urllib2
+import requests
 from bs4 import BeautifulSoup
 from django.core.management.base import BaseCommand
-from django.template import Template, Context
-from django.conf import settings
 from products.models import Product
-from url_settings import TOP_URL
+from .url_settings import TOP_URL
 
 
 class Command(BaseCommand):
@@ -13,8 +11,8 @@ class Command(BaseCommand):
         Scrapes and stores product information
         """
         # get beer page html and make soup object
-        html = urllib2.urlopen(TOP_URL + "/beers/search")
-        soup_beers = BeautifulSoup(html)
+        html = requests.get(TOP_URL + "/beers/search").content
+        soup_beers = BeautifulSoup(html, "html.parser")
 
         # find all beers
         beers = soup_beers.find_all("a", "brand-link")
@@ -22,8 +20,8 @@ class Command(BaseCommand):
         for beer in beers:
             # get beer page and make soup object
             beer_url = beer["href"]
-            beer_html = urllib2.urlopen(TOP_URL + beer_url)
-            soup_beer = BeautifulSoup(beer_html)
+            beer_html = requests.get(TOP_URL + beer_url).content
+            soup_beer = BeautifulSoup(beer_html, "html.parser")
 
             # get sizes
             beer_products = soup_beer.find_all("table", "brand-pricing")
@@ -31,7 +29,7 @@ class Command(BaseCommand):
             # get propertis and valus and merge them into dict
             labels = soup_beer.dl.find_all("dt")
             details = soup_beer.dl.find_all("dd")
-            beer_details = dict(zip(labels,details))
+            beer_details = dict(zip(labels, details))
 
             # get name and image
             beer_name = soup_beer.find("div", "only-desktop").find("h1", "page-title").get_text()
@@ -57,18 +55,18 @@ class Command(BaseCommand):
                         # get product information
                         beer_ids = beer_size.a["href"].split('=')[1]
                         beer_id = beer_ids.split('-')[0]
-                        print beer_id
+                        # print beer_id
                         beer_product_id = beer_ids.split('-')[1]
                     
                         # Comment to disable monitoring
-                        beer_product_size = beer_size.find("td","size").get_text()
-                        beer_product_price =  beer_size.find("td","price").get_text()
+                        beer_product_size = beer_size.find("td", "size").get_text()
+                        beer_product_price =  beer_size.find("td", "price").get_text()
                     
                         # check if product exists
                         # NOTE: used this custom solution because django get_or_create
                         # doesn't play nice with custom primary keys
                         try:
-                            product_entry  = Product.objects.get(product_id=int(beer_product_id.strip()))
+                            product_entry = Product.objects.get(product_id=int(beer_product_id.strip()))
                         except: 
                             product_entry = Product()
 
@@ -85,7 +83,7 @@ class Command(BaseCommand):
                         # NOTE: this code was created befor the beer store redesign
                         # it still works but some items no longer exist so they were 
                         # temporarily omitted from the serializer
-                        for key, value in beer_details.iteritems():
+                        for key, value in beer_details.items():
                             attr = key.get_text()[:-1]
                             val = value.get_text()
 

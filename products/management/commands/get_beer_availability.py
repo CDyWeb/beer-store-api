@@ -1,13 +1,10 @@
 # -*- coding: utf-8 -*-
 import json
-import urllib2
+import requests
 from django.core.management.base import BaseCommand
-from django.template import Template, Context
-from django.conf import settings
-from lxml import etree
-import pytz
 from products.models import Store, Product
-from url_settings import TOP_URL
+from .url_settings import TOP_URL
+
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
@@ -22,7 +19,13 @@ class Command(BaseCommand):
         for product in products:
             
             # retrieve availability json
-            data = json.load(urllib2.urlopen(TOP_URL+'/json/stores-with-sku/storelocations.bpid.%s.json' % (product.product_id,)))
+            url = TOP_URL+'/json/stores-with-sku/storelocations.bpid.%s.json' % product.product_id
+            # print(url)
+            s = requests.get(url).content.decode()
+            if s[0] != '{':
+                continue
+            # print(s)
+            data = json.loads(s)
             data = data['features']
 
             # create a list of stores to reduce amount of DB queries

@@ -1,5 +1,5 @@
-from django.core.urlresolvers import reverse
 from django.db import models
+from django.urls import reverse
 
 
 class Store(models.Model):
@@ -31,7 +31,7 @@ class Store(models.Model):
 
     def __unicode__(self):
         return self.name
-	
+
     def get_absolute_url(self):
         return reverse("store_detail", kwargs={"store_id": self.store_id})
 

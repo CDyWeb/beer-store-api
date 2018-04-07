@@ -1,11 +1,10 @@
 import json
-import urllib2
+
+import requests
 from bs4 import BeautifulSoup
 from products.models import Store
 from django.core.management.base import BaseCommand
-from django.template import Template, Context
-from django.conf import settings
-from url_settings import TOP_URL
+from .url_settings import TOP_URL
 
 
 class Command(BaseCommand):
@@ -14,12 +13,12 @@ class Command(BaseCommand):
         scrapes and stores store information
         """
         # get location json
-        data = json.load(urllib2.urlopen(TOP_URL+'/storelocations.json'))
+        data = json.loads(requests.get(TOP_URL + '/storelocations.json').content.decode())
         data = data['features']
 
         # loop through each location
         for d in data:
-	
+
             # get json properties
             store = d['properties']
             coords = d['geometry']['coordinates']
@@ -28,15 +27,14 @@ class Command(BaseCommand):
             link = store['description']
 
             # go to store page
-            link_soup = BeautifulSoup(link)
+            link_soup = BeautifulSoup(link, "html.parser")
             store_link = link_soup.a['href']
-            store_html = urllib2.urlopen(TOP_URL+store_link)
-
+            store_html = requests.get(TOP_URL + store_link).content
 
             # get store info
-            store_soup = BeautifulSoup(store_html)
+            store_soup = BeautifulSoup(store_html, "html.parser")
             brs = store_soup.find("div", "store-address-container").div.find_all('br')
-                
+
             store_address = brs[0].previous_sibling
             store_city_postal = store_address.next_sibling.next_sibling
             store_phone = store_city_postal.next_sibling.next_sibling
@@ -48,20 +46,20 @@ class Command(BaseCommand):
 
             # get hours
             try:
-    	        store_table_hours = store_soup.find("table", "store-hours").tbody.find_all("tr")
-    	        hours = []
+                store_table_hours = store_soup.find("table", "store-hours").tbody.find_all("tr")
+                hours = []
 
                 for store_hour in store_table_hours:
-    	            hours.append(store_hour.find_all("td")[1].get_text())
-    	            hours.append(store_hour.find_all("td")[2].get_text())
+                    hours.append(store_hour.find_all("td")[1].get_text())
+                    hours.append(store_hour.find_all("td")[2].get_text())
             # if store page is outdated (ie store doesn't exist) skip it
             except:
                 continue
 
             # make a dictionary of date and hours
-            days = ["monday-open", "monday-close", 
-                    "tuesday-open", "tuesday-close", 
-    		        "wednesday-open", "wednesday-close",
+            days = ["monday-open", "monday-close",
+                    "tuesday-open", "tuesday-close",
+                    "wednesday-open", "wednesday-close",
                     "thursday-open", "thursday-close",
                     "friday-open", "friday-close",
                     "saturday-open", "saturday-close",
