@@ -53,3 +53,5 @@ coverage.xml
 docs/_build/
 *.pys
 settings.py
+
+\.idea/
