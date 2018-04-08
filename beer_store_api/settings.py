@@ -2,6 +2,7 @@ import os
 
 import dj_database_url
 
+BASE_DIR = os.path.dirname(os.path.dirname(__file__))
 DEBUG = os.environ.get('DEBUG', True)
 
 SECRET_KEY = os.environ.get('SECRET_KEY', 'not-a-secret')
@@ -14,11 +15,11 @@ ALLOWED_HOSTS = [
 ROOT_URLCONF = 'beer_store_api.urls'
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
+    # 'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
+    # 'django.contrib.sessions',
+    # 'django.contrib.messages',
     'django.contrib.staticfiles',
 
     'beer_store_api',
@@ -32,10 +33,10 @@ DATABASES = {
 
 MIDDLEWARE = [
     # 'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
+    # 'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     # 'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
+    # 'django.contrib.messages.middleware.MessageMiddleware',
     # 'django.contrib.auth.middleware.AuthenticationMiddleware',
 ]
 
@@ -58,3 +59,4 @@ TEMPLATES = [
 ]
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
