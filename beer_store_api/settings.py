@@ -11,6 +11,7 @@ ALLOWED_HOSTS = [
     '127.0.0.1',
     'ontariobeerapi.herokuapp.com',
     'ontariobeerapi.ca',
+    'www.ontariobeerapi.ca',
     os.environ.get('HOST', 'localhost')
 ]
 
