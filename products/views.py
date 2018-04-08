@@ -1,11 +1,12 @@
-from django.shortcuts import render
-from rest_framework.decorators import api_view, renderer_classes
-from rest_framework.response import Response
-from .models import Store, Product 
-from .serializers import StoreSerializer, ProductSerializer, BeerSerializer
+import json
+
+from decimal import Decimal
+from django.core.serializers.json import DjangoJSONEncoder
+from django.forms import model_to_dict
+from django.http import JsonResponse
+from .models import Store, Product
 
 
-@api_view(['GET'])
 def stores(request, format=None):
     """
     Returns data on all Beer Store locations
@@ -14,31 +15,27 @@ def stores(request, format=None):
     stores = Store.objects.all()
 
     # get options
-    city = request.QUERY_PARAMS.get('city', None)
+    city = request.GET.get('city', None)
 
     # filter if options are set
     if city is not None:
         stores = stores.filter(city=city)
     
     # return data
-    serializer = StoreSerializer(stores)
-    return Response(serializer.data)
+    return JsonResponse(list(stores.values()), safe=False)
 
 
-@api_view(['GET'])
 def store_by_id(request, store_id, format=None):
     """
     Returns data on a Beer Store location with a specified store id
     """
     # get store by id
-    stores = Store.objects.get(store_id = int(store_id))
+    store = Store.objects.get(store_id = int(store_id))
 
     # return data
-    serializer = StoreSerializer(stores)
-    return Response(serializer.data)
+    return JsonResponse(model_to_dict(store), safe=False)
 
 
-@api_view(['GET'])
 def stores_with_product(request, product_id):
     """
     Returns all stores with a specified product
@@ -47,19 +44,17 @@ def stores_with_product(request, product_id):
     stores = Store.objects.filter(product__product_id=int(product_id))
     
     # get options
-    city = request.QUERY_PARAMS.get('city', None)
+    city = request.GET.get('city', None)
 
     # filter if options are set
     if city is not None:
         stores = stores.filter(city=city)
 
     # return data
-    serializer = StoreSerializer(stores)
-    return Response(serializer.data)
+    return JsonResponse(list(stores.values()), safe=False)
 
 
-@api_view(['GET'])
-def products(request, format=None):
+def products(request):
     """
     Returns data on all Beer Store products
     category -- The products's category 
@@ -71,11 +66,11 @@ def products(request, format=None):
     products = Product.objects.all()
 
     # get options
-    category = request.QUERY_PARAMS.get('category', None)
-    type = request.QUERY_PARAMS.get('type', None)
-    brewer = request.QUERY_PARAMS.get('brewer', None)
-    country = request.QUERY_PARAMS.get('country', None)
-    on_sale = request.QUERY_PARAMS.get('on_sale', None)
+    category = request.GET.get('category', None)
+    type = request.GET.get('type', None)
+    brewer = request.GET.get('brewer', None)
+    country = request.GET.get('country', None)
+    on_sale = request.GET.get('on_sale', None)
 
     # filter if options are set
     if category is not None:
@@ -94,11 +89,9 @@ def products(request, format=None):
         products = products.filter(on_sale=True)
  
     # return data
-    serializer = ProductSerializer(products)
-    return Response(serializer.data)
+    return JsonResponse(list(products.values()), safe=False)
 
 
-@api_view(['GET'])
 def product_by_id(request, product_id, format=None):
     """
     Returns data on a Beer Store product with a specified product id
@@ -106,12 +99,16 @@ def product_by_id(request, product_id, format=None):
     # get product by id
     product = Product.objects.get(product_id = int(product_id))
 
+    class ProductEncoder(DjangoJSONEncoder):
+        def default(self, o):
+            if isinstance(o, Store):
+                return super().encode(model_to_dict(o))
+            return super().default(o)
+
     # return data
-    serializer = ProductSerializer(product)
-    return Response(serializer.data)
+    return JsonResponse(model_to_dict(product), safe=False, encoder=ProductEncoder)
 
 
-@api_view(['GET'])
 def products_at_store(request, store_id):
     """
     Returns all products at a specified store
@@ -124,11 +121,11 @@ def products_at_store(request, store_id):
     products = Product.objects.filter(stores__store_id=int(store_id))
     
     # get options
-    category = request.QUERY_PARAMS.get('category', None)
-    type = request.QUERY_PARAMS.get('type', None)
-    brewer = request.QUERY_PARAMS.get('brewer', None)
-    country = request.QUERY_PARAMS.get('country', None)
-    on_sale = request.QUERY_PARAMS.get('on_sale', None)
+    category = request.GET.get('category', None)
+    type = request.GET.get('type', None)
+    brewer = request.GET.get('brewer', None)
+    country = request.GET.get('country', None)
+    on_sale = request.GET.get('on_sale', None)
 
     # filter if options are set
     if category is not None:
@@ -147,11 +144,9 @@ def products_at_store(request, store_id):
         products = products.filter(on_sale=True)
 
     #return data
-    serializer = ProductSerializer(products)
-    return Response(serializer.data)
+    return JsonResponse(list(products.values()), safe=False)
 
 
-@api_view(['GET'])
 def beer_products(request, beer_id, format=None):
     """
     Returns all products of a beer with a specified beer id
@@ -159,18 +154,16 @@ def beer_products(request, beer_id, format=None):
     # get the beer's products
     products = Product.objects.filter(beer_id = int(beer_id))
 
-    on_sale = request.QUERY_PARAMS.get('on_sale', None)
+    on_sale = request.GET.get('on_sale', None)
     
     if on_sale == "true":
         products = products.filter(on_sale=True)
 
     # return data
-    serializer = ProductSerializer(products)
-    return Response(serializer.data)
+    return JsonResponse(list(products.values()), safe=False)
 
 
-@api_view(['GET'])
-def beers(request, format=None):
+def beers(request):
     """
     Returns all beers
     category -- The beer's category 
@@ -182,11 +175,11 @@ def beers(request, format=None):
     beers = Product.objects.distinct('beer_id')
     
     # get options
-    category = request.QUERY_PARAMS.get('category', None)
-    type = request.QUERY_PARAMS.get('type', None)
-    brewer = request.QUERY_PARAMS.get('brewer', None)
-    country = request.QUERY_PARAMS.get('country', None)
-    on_sale = request.QUERY_PARAMS.get('on_sale', None)
+    category = request.GET.get('category', None)
+    type = request.GET.get('type', None)
+    brewer = request.GET.get('brewer', None)
+    country = request.GET.get('country', None)
+    on_sale = request.GET.get('on_sale', None)
 
     # filter if options are set
     if category is not None:
@@ -205,21 +198,15 @@ def beers(request, format=None):
         beers = beers.filter(on_sale=True)
 
     # return data
-    serializer = BeerSerializer(beers)
-    return Response(serializer.data)
+    return JsonResponse(list(beers.values()), safe=False)
 
 
-@api_view(['GET'])
-def beer_by_id(request, beer_id, format=None):
+def beer_by_id(request, beer_id):
     """
     Returns a beer with a specified beer id
     """
     # get beer
-    beer_results = Product.objects.filter(beer_id = int(beer_id)).distinct('beer_id')
-    beer = list(beer_results[:1])
-    if beer:
-        beer = beer[0]
+    beer = Product.objects.filter(beer_id = int(beer_id)).first()
 
     # return data
-    serializer = BeerSerializer(beer)
-    return Response(serializer.data)
+    return JsonResponse(model_to_dict(beer), safe=False)

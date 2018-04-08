@@ -7,16 +7,3 @@ def index(request):
     """
     return render(request, 'index.html')
 
-
-def about(request):
-    """
-    returns about page 
-    """
-    return render(request, 'about.html')
-
-
-def demos(request):
-    """
-    returns demo page
-    """
-    return render(request, 'demos.html')
