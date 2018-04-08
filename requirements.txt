@@ -1,6 +1,4 @@
 django
-django-rest-swagger
-djangorestframework
 dj_database_url
 psycopg2-binary
 beautifulsoup4

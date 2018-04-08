@@ -1,7 +1,6 @@
-from django.conf.urls import patterns, include, url
+from django.conf.urls import url, include
 
-urlpatterns = patterns('',
-	url(r'^', include('products.urls')),
-	url(r'^', include('land.urls')),
-    url(r'^docs/', include('rest_framework_swagger.urls')),
-)
+urlpatterns = [
+    url(r'', include('products.urls')),
+    url(r'', include('land.urls')),
+]
