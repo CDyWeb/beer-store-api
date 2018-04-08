@@ -3,3 +3,4 @@ dj_database_url
 psycopg2-binary
 beautifulsoup4
 requests
+whitenoise
