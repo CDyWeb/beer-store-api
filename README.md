@@ -17,6 +17,7 @@ just west of Africa. That's just what I scraped from the website.
 ## How it was made ##
 - Python
 - Django
-- Django REST Framework
-- Django REST Swagger (for documentation)
 - Beautiful Soup (for scraping The Beer Store website)
+
+See
+[http://ontariobeerapi.ca/](http://ontariobeerapi.ca/)
