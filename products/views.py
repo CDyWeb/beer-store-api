@@ -3,11 +3,36 @@ import json
 from decimal import Decimal
 from django.core.serializers.json import DjangoJSONEncoder
 from django.forms import model_to_dict
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
 from .models import Store, Product
 
 
-def stores(request, format=None):
+def _response(request, result, encoder=DjangoJSONEncoder):
+    if request.GET.get('format', None) == 'html':
+        output = '<table>'
+        if isinstance(result, dict):
+            for key, value in result.items():
+                output += '<tr><th>%s</th><td>%s</td></tr>' % (key, value)
+        elif isinstance(result, list):
+            first_row = True
+            for line in result:
+                if first_row:
+                    first_row = False
+                    output += '<tr>'
+                    for key, value in line.items():
+                        output += '<th>%s</th>' % key
+                    output += '</tr>'
+                output += '<tr>'
+                for key, value in line.items():
+                    output += '<td>%s</td>' % value
+                output += '</tr>'
+        output += '</table>'
+        return HttpResponse(output)
+
+    return JsonResponse(result, safe=False, encoder=encoder)
+
+
+def stores(request):
     """
     Returns data on all Beer Store locations
     city -- The stores' city
@@ -22,10 +47,10 @@ def stores(request, format=None):
         stores = stores.filter(city=city)
     
     # return data
-    return JsonResponse(list(stores.values()), safe=False)
+    return _response(request, list(stores.values()))
 
 
-def store_by_id(request, store_id, format=None):
+def store_by_id(request, store_id):
     """
     Returns data on a Beer Store location with a specified store id
     """
@@ -33,7 +58,7 @@ def store_by_id(request, store_id, format=None):
     store = Store.objects.get(store_id = int(store_id))
 
     # return data
-    return JsonResponse(model_to_dict(store), safe=False)
+    return _response(request, model_to_dict(store))
 
 
 def stores_with_product(request, product_id):
@@ -51,7 +76,7 @@ def stores_with_product(request, product_id):
         stores = stores.filter(city=city)
 
     # return data
-    return JsonResponse(list(stores.values()), safe=False)
+    return _response(request, list(stores.values()))
 
 
 def products(request):
@@ -89,10 +114,10 @@ def products(request):
         products = products.filter(on_sale=True)
  
     # return data
-    return JsonResponse(list(products.values()), safe=False)
+    return _response(request, list(products.values()))
 
 
-def product_by_id(request, product_id, format=None):
+def product_by_id(request, product_id):
     """
     Returns data on a Beer Store product with a specified product id
     """
@@ -106,7 +131,7 @@ def product_by_id(request, product_id, format=None):
             return super().default(o)
 
     # return data
-    return JsonResponse(model_to_dict(product), safe=False, encoder=ProductEncoder)
+    return _response(request, model_to_dict(product), encoder=ProductEncoder)
 
 
 def products_at_store(request, store_id):
@@ -117,6 +142,7 @@ def products_at_store(request, store_id):
     brewer -- The products's brewer
     country -- The product's country of origin
     on_sale -- If the product is on sale (true|false)
+    size -- Size keyword
     """
     products = Product.objects.filter(stores__store_id=int(store_id))
     
@@ -126,6 +152,7 @@ def products_at_store(request, store_id):
     brewer = request.GET.get('brewer', None)
     country = request.GET.get('country', None)
     on_sale = request.GET.get('on_sale', None)
+    size = request.GET.get('size', None)
 
     # filter if options are set
     if category is not None:
@@ -140,14 +167,17 @@ def products_at_store(request, store_id):
     if country is not None:
         products = products.filter(country=country)
 
+    if size is not None:
+        products = products.filter(size__icontains=size)
+
     if on_sale == "true":
         products = products.filter(on_sale=True)
 
     #return data
-    return JsonResponse(list(products.values()), safe=False)
+    return _response(request, list(products.values()))
 
 
-def beer_products(request, beer_id, format=None):
+def beer_products(request, beer_id):
     """
     Returns all products of a beer with a specified beer id
     """
@@ -160,7 +190,7 @@ def beer_products(request, beer_id, format=None):
         products = products.filter(on_sale=True)
 
     # return data
-    return JsonResponse(list(products.values()), safe=False)
+    return _response(request, list(products.values()))
 
 
 def beers(request):
@@ -198,7 +228,7 @@ def beers(request):
         beers = beers.filter(on_sale=True)
 
     # return data
-    return JsonResponse(list(beers.values()), safe=False)
+    return _response(request, list(beers.values()))
 
 
 def beer_by_id(request, beer_id):
@@ -209,4 +239,4 @@ def beer_by_id(request, beer_id):
     beer = Product.objects.filter(beer_id = int(beer_id)).first()
 
     # return data
-    return JsonResponse(model_to_dict(beer), safe=False)
+    return _response(request, model_to_dict(beer))
