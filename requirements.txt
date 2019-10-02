@@ -1,7 +1,6 @@
-django
-dj_database_url
-psycopg2-binary
-beautifulsoup4
-requests
-whitenoise
-gunicorn
+django==2.2.6
+dj_database_url==0.5.0
+psycopg2-binary==2.8.3
+beautifulsoup4==4.8.0
+requests==2.22.0
+gunicorn==19.9.0
