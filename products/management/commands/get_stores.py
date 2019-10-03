@@ -64,7 +64,7 @@ class Command(BaseCommand):
                 hours = json.loads(element['fullhours'])
                 for i, d in enumerate(['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday']):
                     setattr(store_entry, f'{d}_open', hours[i][0])
-                    setattr(store_entry, f'{d}_close', hours[i][0])
+                    setattr(store_entry, f'{d}_close', hours[i][1])
 
                 store_entry.save()
 
